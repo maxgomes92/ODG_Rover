@@ -5,30 +5,31 @@ from ArduinoComm import *
 from menu import *
 
 def main():
+	# Sets up communication with Arduino
 	Ard = ArduinoComm("/dev/ttyACM0", 9600)
-	toStream = ['',''] # [0] baseline / [1] position
 	
 	# Finds out its own path
-	python_path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) # script directory
+	python_path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 	root_path = ""
-	root_path = python_path[:len(root_path)-17]		
+	root_path = python_path[:len(root_path)-17]	# Removing last folder's name
 	
 	# Receives Instruction from Arduino
 	try:	
 		while True:
-			opt = Ard.read()
+			# List to hold files name
+			toStream = ['',''] # [0] baseline / [1] position
 			
-			# Converting to Integer
-			if opt != '':
-				
-				# Open Console - /home/odroid/Desktop/GitHub/piksi_tools
+			opt = Ard.read()
+			# Processes instruction
+			if opt != '':			
+				# Opens Piksi Console - .../ODG_Rover/piksi_tools
 				if opt[0] == "1":
 					path = "xterm -e 'cd " + root_path + "/piksi_tools && python piksi_tools/console/console.py -p /dev/ttyUSB0'"
 					subprocess.Popen([path], shell=True, stdin=None, 
 					stdout=True, stderr=None, close_fds=True)
 					print "Console opened."
 				
-				# Chooses CSV files
+				# Chooses CSV log files
 				elif opt[0] == "2": 
 					toStream = getFileName(Ard, root_path)					
 					if toStream == "":
@@ -42,7 +43,7 @@ def main():
 				
 				# Streams CSV files
 				elif opt[0] == "4":
-					if toStream[0] == [''] and toStream[1] == ['']: 
+					if toStream[0] == '' and toStream[1] == '': 
 						Ard.write("false")
 					else:
 						Ard.write("true")
@@ -53,7 +54,15 @@ def main():
 							msg = Ard.read()
 						print "Stream stop requested."
 				
-				# Stop code in order to reset it by .sh file		
+				# Saves the current spot to a file		
+				elif opt[0] == "5":
+					if toStream[0] == '' and toStream[1] == '':
+						Ard.write("false")
+					else:
+						Ard.write("true")
+						saveSpot(toStream, root_path)
+				
+				# Stops code. It will be reset by ./startup_code.py		
 				elif opt[0] == "9":
 					sys.exit("Exiting program...")
 						

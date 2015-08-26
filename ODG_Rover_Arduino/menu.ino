@@ -6,6 +6,7 @@ void printMenu(AndroidComm& And, UbuntuComm& Ubu) {
     "2. Choose CSV to read\n"
     "3. Delete all CSV files\n"
     "4. Start Streamming\n"
+    "5. Save a spot\n"
     "9. Reset Python Code\n"
     "0. Shut down ODROID\n");
 
@@ -18,89 +19,108 @@ void clearBuffer(UbuntuComm& Ubu) {
 }
 
 void menuEngine(AndroidComm& And, UbuntuComm& Ubu) {
-  int opt;
   String msg = NULL;
+  String chosenFile[2];
 
-  while(msg == NULL) {
-    while((msg = And.readString()) == NULL);
-    if(msg.equals("menu")) printMenu(And, Ubu);
-    char myChar = msg[0];
-
-    if(isDigit(myChar)) {
-      opt = msg.toInt();
-      String chosenFile[2];
+  //while(msg == NULL) {    
+  if((msg = And.readString()) != NULL) {
+    //while((msg = And.readString()) == NULL);
+    if(msg.equals("menu")) {
+      And.println("-----------------------------");
+      printMenu(And, Ubu);
+    }
+    
+    if(msg.length() == 1) {
+      char opt = msg[0];
+          
+      // Opens Piksi Console - .../ODG_Rover/piksi_tools
+      if(msg.equals("1")) {
+        clearBuffer(Ubu); // Clears buffer (from Odroid to Arduino)
+        Ubu.print(String(opt)); // Sends instruction to Odroid/Ubuntu
+        And.println("Console running..."); // Prints to the Android
+        And.println("-----------------------------");         
+      }         
       
-      switch(opt) {
-        case 1:
-          clearBuffer(Ubu);
-          Ubu.print(String(opt));
-          And.println("Console running...");
-          clearBuffer(Ubu);
-          And.println("-----------------------------");         
-          break;          
-        
-        case 2:
-          clearBuffer(Ubu);
-          Ubu.print(String(opt));
-          getChosenFile(chosenFile, And, Ubu);
-          Ubu.print(chosenFile[0]);
-          Ubu.print(chosenFile[1]);            
-          And.println("-----------------------------");         
-          break;
-          
-        case 3:
-          clearBuffer(Ubu);
-          Ubu.print(String(opt));
-          And.println("Deleting CSV files...");
+      // Chooses CSV log files
+      else if(msg.equals("2")) {
+        clearBuffer(Ubu);
+        Ubu.print(String(opt));
+        if(!(getChosenFile(chosenFile, And, Ubu))) return;
+        Ubu.print(chosenFile[0]);
+        Ubu.print(chosenFile[1]);            
+        And.println("-----------------------------");         
+      }
+       
+      // Deletes all CSV files 
+      else if(msg.equals("3")) {
+        clearBuffer(Ubu);
+        Ubu.print(String(opt));
+        And.println("Deleting CSV files...");
+        And.println("-----------------------------");
+      }
+      
+      // Streams CSV files
+      else if(msg.equals("4")) {
+        clearBuffer(Ubu);
+        Ubu.print(String(opt));
+        while((msg = Ubu.readString()) == NULL);
+        if(msg == "false") And.println("No CSV file has been opened yet.");
+        else if(msg == "true") {
+          And.println("Starting to stream... type in 'stop'.");
+          while(!((And.readString()) == "stop")) {
+            msg = Ubu.readString();
+            if(msg != NULL) And.println(msg);
+          };
+          Ubu.print("stop");
           And.println("-----------------------------");
-          break;
-  
-        case 4:
-          clearBuffer(Ubu);
-          Ubu.print(String(opt));
-          while((msg = Ubu.readString()) == NULL);
-          if(msg == "false") And.println("No file has been opened yet.");
-          else if(msg == "true") {
-            And.println("Starting to stream... type in 'stop'.");
-            while(!((And.readString()) == "stop")) {
-              msg = Ubu.readString();
-              if(msg != NULL) And.println(msg);
-            };
-            Ubu.print("stop");
-            And.println("-----------------------------");
-            printMenu(And, Ubu);
-          }
-          break;
-          
-        case 9:
-          clearBuffer(Ubu);
-          Ubu.print(String(opt));
-          And.println("---------------------------------");
-          And.println("|   Resetting Python Code   |");
-          And.println("---------------------------------");
-          menuEngine(And, Ubu);
-          break;
-          
-        case 0:
-          Ubu.print(String(opt));
-          And.println("---------------------------------");
-          And.println("|   Shutting down Odroid    |");
-          And.println("---------------------------------");
-          menuEngine(And, Ubu);
-          break;
-  
-        default:
-          And.println("Invalid option! Try again.");
-          msg = NULL;  
-      }      
+        }
+      }
+      
+      // Saves the current spot to a file  
+      else if(msg.equals("5")) {
+        clearBuffer(Ubu);
+        Ubu.print(String(opt));
+        while((msg = Ubu.readString()) == NULL);
+        if(msg == "false") { 
+          And.println("No CSV file has been opened yet.");          
+          And.println("-----------------------------");
+        }
+        else if(msg == "true") {
+          And.println("Spot has been saved.");
+          And.println("-----------------------------");            
+        }
+      }
+      
+      // Stops code. It will be reset by ODG_Rover_Python/startup_code.py  
+      else if(msg.equals("9")) {
+        Ubu.print(String(opt));
+        And.println("---------------------------------");
+        And.println("|   Resetting Python Code   |");
+        And.println("---------------------------------");
+        while((msg = Ubu.readString()) == NULL);
+      }
+      
+      // Shutdown Odroid  
+      else if(msg.equals("0")) {
+        Ubu.print(String(opt));
+        And.println("---------------------------------");
+        And.println("|   Shutting down Odroid    |");
+        And.println("---------------------------------");
+      }
+      
+      else { 
+        And.println("Invalid input.");
+        And.println("-----------------------------");
+      }
     } else {
-      msg = NULL;
-      And.println("Invalid option! Try again.");
-    }  
+      // For more than 1 character input
+      And.println("Invalid input.");
+      And.println("-----------------------------");       
+    }
   }
 }
 
-void getChosenFile(String files[2], AndroidComm& And, UbuntuComm& Ubu) {
+int getChosenFile(String files[2], AndroidComm& And, UbuntuComm& Ubu) {
   int nFiles;
   String msg = NULL;
 
@@ -109,10 +129,10 @@ void getChosenFile(String files[2], AndroidComm& And, UbuntuComm& Ubu) {
   if(!(nFiles = msg.toInt())) {
     And.println("No CSV files found.");
     And.println("---------------------------------");
-    menuEngine(And, Ubu);
+    return 0;
   }
 
-  And.println("----------------- File list");
+  And.println("- File list (type in file number):");
 
   // Gets file names from Python
   String fileNames[nFiles];
@@ -135,7 +155,8 @@ void getChosenFile(String files[2], AndroidComm& And, UbuntuComm& Ubu) {
 
     if(fileChoice[j] > nFiles || fileChoice[j] < 0) {
       And.println("Invalid file number.");
-      printMenu(And, Ubu);
+      And.println("---------------------------------");
+      return 0;
     }
   }
 
@@ -146,6 +167,8 @@ void getChosenFile(String files[2], AndroidComm& And, UbuntuComm& Ubu) {
   
   if(fileChoice[1] != 0) files[1] = fileNames[fileChoice[1]-1];  
   else files[1] = "0";
+  
+  return 1;
 }
 
 
