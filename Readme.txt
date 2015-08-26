@@ -1,4 +1,15 @@
 /////// INSTRUCTIONS TO GET && RUN THE SOFTWARE ////////
+
+// ------------------ GENERAL
+This software was developed to integrate the Odroid with the Arduino.
+Both will be placed in the Rover Robot.
+Since there will be no way to have a monitor hocked up to it, the Arduino
+communicates with the Android.
+The Android runs a apk from the Google Play Store named Bluetooth Terminal (v1.2).
+It can be found at: https://goo.gl/8Gk4KA
+Through the Android you can interact and command the Odroid by sending
+commands to the Arduino, who will interpret it and send the necessary
+information to the Odroid.
 	
 // ------------------ TO GET
 1-Clone the projects:
@@ -75,15 +86,3 @@ Functions:
 If you want to test in, after running the console, goes to Settings and 
 enable the simulation mode by switching it to True.
 For more info: http://docs.swiftnav.com/wiki/Piksi_User_Getting_Started_Guide
-
-
-// ------------------ GENERAL
-This software was developed to integrate the Odroid with the Arduino.
-Both will be placed in the Rover Robot.
-Since there will be no way to have a monitor hocked up to it, the Arduino
-communicates with the Android.
-The Android runs a apk from the Google Play Store named Bluetooth Terminal (v1.2).
-It can be found at: https://goo.gl/8Gk4KA
-Through the Android you can interact and command the Odroid by sending
-commands to the Arduino, who will interpret it and send the necessary
-information to the Odroid.
