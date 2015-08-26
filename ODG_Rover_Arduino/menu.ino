@@ -4,7 +4,9 @@ void printMenu(AndroidComm& And, UbuntuComm& Ubu) {
   And.print("--> Piksi Integration Software\n"
     "1. Run Console\n"
     "2. Choose CSV to read\n"
-    "3. Start Streamming\n"
+    "3. Delete all CSV files\n"
+    "4. Start Streamming\n"
+    "9. Reset Python Code\n"
     "0. Shut down ODROID\n");
 
   menuEngine(And, Ubu); 
@@ -21,6 +23,7 @@ void menuEngine(AndroidComm& And, UbuntuComm& Ubu) {
 
   while(msg == NULL) {
     while((msg = And.readString()) == NULL);
+    if(msg.equals("menu")) printMenu(And, Ubu);
     char myChar = msg[0];
 
     if(isDigit(myChar)) {
@@ -32,8 +35,9 @@ void menuEngine(AndroidComm& And, UbuntuComm& Ubu) {
           clearBuffer(Ubu);
           Ubu.print(String(opt));
           And.println("Console running...");
-          And.println("-----------------------------");
-          printMenu(And, Ubu);           
+          clearBuffer(Ubu);
+          And.println("-----------------------------");         
+          break;          
         
         case 2:
           clearBuffer(Ubu);
@@ -41,11 +45,17 @@ void menuEngine(AndroidComm& And, UbuntuComm& Ubu) {
           getChosenFile(chosenFile, And, Ubu);
           Ubu.print(chosenFile[0]);
           Ubu.print(chosenFile[1]);            
+          And.println("-----------------------------");         
+          break;
+          
+        case 3:
+          clearBuffer(Ubu);
+          Ubu.print(String(opt));
+          And.println("Deleting CSV files...");
           And.println("-----------------------------");
-          printMenu(And, Ubu);         
           break;
   
-        case 3:
+        case 4:
           clearBuffer(Ubu);
           Ubu.print(String(opt));
           while((msg = Ubu.readString()) == NULL);
@@ -60,6 +70,23 @@ void menuEngine(AndroidComm& And, UbuntuComm& Ubu) {
             And.println("-----------------------------");
             printMenu(And, Ubu);
           }
+          break;
+          
+        case 9:
+          clearBuffer(Ubu);
+          Ubu.print(String(opt));
+          And.println("---------------------------------");
+          And.println("|   Resetting Python Code   |");
+          And.println("---------------------------------");
+          menuEngine(And, Ubu);
+          break;
+          
+        case 0:
+          Ubu.print(String(opt));
+          And.println("---------------------------------");
+          And.println("|   Shutting down Odroid    |");
+          And.println("---------------------------------");
+          menuEngine(And, Ubu);
           break;
   
         default:
@@ -79,7 +106,11 @@ void getChosenFile(String files[2], AndroidComm& And, UbuntuComm& Ubu) {
 
   // Receiving number of files 
   while(msg == NULL) msg = Ubu.readString();
-  if(!(nFiles = msg.toInt())) printMenu(And, Ubu);
+  if(!(nFiles = msg.toInt())) {
+    And.println("No CSV files found.");
+    And.println("---------------------------------");
+    menuEngine(And, Ubu);
+  }
 
   And.println("----------------- File list");
 

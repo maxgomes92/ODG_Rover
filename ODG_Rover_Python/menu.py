@@ -1,16 +1,32 @@
 import os
+import subprocess
 from ArduinoComm import *
 
-def getFileName(Ard):
+def deleteCSV(Ard, root_path):
+	i=0
+	path = ""
+	path = root_path + "/piksi_tools"
+	for file in os.listdir(path):
+		if file.endswith(".csv"):
+			cmd = "xterm -e 'rm " + root_path + "/piksi_tools/" + file + "'"
+			subprocess.call(cmd, shell=True)
+			i+=1			
+	print str(i) + " CSV files deleted."
+
+def getFileName(Ard, root_path):
 	files = []
 	chosenFile = ['','']
-	
 	# Search files in piksi folder
-	for file in os.listdir("/home/odroid/Desktop/GitHub/piksi_tools"):
+	path = root_path + "/piksi_tools"
+	for file in os.listdir(path):
 		if file.endswith(".csv"):
-			files.append(file)
+			files.append(file)	
 	
-	# Converts to string
+	if files == []:
+		Ard.write("0")
+		return ""
+	
+	# Sends number of files found
 	Ard.write(str(len(files)))
 	
 	# Sends files name to Arduino
@@ -30,10 +46,10 @@ def getFileName(Ard):
 			
 	return chosenFile
 
-def getLastLine(filename):
+def getLastLine(filename, root_path):
 	name = str(filename)
 	n = len(name)
-	path = "/home/odroid/Desktop/GitHub/piksi_tools/" + name[2:n-6]
+	path = root_path + "/piksi_tools/" + name[2:n-6]
 	myfile = open(path, 'r')
 
 	for line in myfile:
@@ -41,12 +57,12 @@ def getLastLine(filename):
 		
 	return last_line
 	
-def streamFile(file_names, Ard):
+def streamFile(file_names, Ard, root_path):
 	toPrint = ""
 	
 	if file_names[0] != ['']:
 		# ---------- 'baseline' file
-		msg = getLastLine(file_names[0]);
+		msg = getLastLine(file_names[0], root_path);
 		msg = msg[:len(msg)-1]
 		msg = msg.split(',')
 		
@@ -64,13 +80,13 @@ def streamFile(file_names, Ard):
 			toPrint = toPrint + "\n"
 			
 		# ---------- 'Position' file
-		msg = getLastLine(file_names[1])
+		msg = getLastLine(file_names[1], root_path)
 		msg = msg[:len(msg)-1]
 		msg = msg.split(',')
 		
 		# Coordinates
 		Lat = float(msg[1])
 		Lon = float(msg[2])
-		toPrint = toPrint + ("Lt:%.3f" % Lat + " Lg:%.3f" % Lon)
+		toPrint = toPrint + ("Lt:%.6f" % Lat + " Lg:%.6f" % Lon)
 	
 	Ard.write(toPrint)
