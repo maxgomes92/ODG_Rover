@@ -1,1 +1,6 @@
-/dev/ttyACM1
+Arduino:
+PORT=/dev/ttyACM0
+BAUD=
+
+PIKSI:
+PORT=
