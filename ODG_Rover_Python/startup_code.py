@@ -8,10 +8,10 @@ def start():
 	while True:
 		try:
 			cmd = "python " + python_path + "/__init__.py" 
-			print subprocess.call([cmd],
+			subprocess.call([cmd],
 			shell=True, stdin=None, stdout=None, 
 			stderr=None)
 		except KeyboardInterrupt:
-			sys.exit("\nExiting program...")
+			sys.exit()
 
 start()

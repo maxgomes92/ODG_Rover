@@ -1,5 +1,5 @@
 import subprocess, time
-import sys, inspect, os
+import sys, inspect, os, signal
 
 from ArduinoComm import *
 from menu import *
@@ -7,6 +7,9 @@ from menu import *
 def main():
 	# Sets up communication with Arduino
 	Ard = ArduinoComm("/dev/ttyACM0", 9600)
+	
+	# List to hold files name
+	toStream = ['',''] # [0] baseline / [1] position	
 	
 	# Finds out its own path
 	python_path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -16,17 +19,14 @@ def main():
 	# Receives Instruction from Arduino
 	try:	
 		while True:
-			# List to hold files name
-			toStream = ['',''] # [0] baseline / [1] position
-			
 			opt = Ard.read()
 			# Processes instruction
 			if opt != '':			
 				# Opens Piksi Console - .../ODG_Rover/piksi_tools
 				if opt[0] == "1":
 					path = "xterm -e 'cd " + root_path + "/piksi_tools && python piksi_tools/console/console.py -p /dev/ttyUSB0'"
-					subprocess.Popen([path], shell=True, stdin=None, 
-					stdout=True, stderr=None, close_fds=True)
+					console = subprocess.Popen([path], shell=True, stdin=None, 
+					stderr=None, close_fds=True, preexec_fn=os.setsid)					
 					print "Console opened."
 				
 				# Chooses CSV log files
@@ -64,7 +64,9 @@ def main():
 				
 				# Stops code. It will be reset by ./startup_code.py		
 				elif opt[0] == "9":
-					sys.exit("Exiting program...")
+					print "Closing console."
+					os.killpg(console.pid, signal.SIGTERM)					
+					sys.exit("--- Exiting program. ---")
 						
 				# Turns off Odroid
 				elif opt[0] == "0":

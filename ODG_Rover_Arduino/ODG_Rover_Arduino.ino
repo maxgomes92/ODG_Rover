@@ -1,6 +1,9 @@
 #include "serialHandler.h"
 #include "menu.h"
 
+// INFORMATION FLUX
+// Odroid <USB> Arduino <BLUETOOTH> Android
+
 void setup() {}
 
 void loop() {
@@ -8,6 +11,7 @@ void loop() {
   UbuntuComm Ubu(9600); // Baud
 
   printMenu(And, Ubu);
+  
   while(1) {
     menuEngine(And,Ubu);
   }

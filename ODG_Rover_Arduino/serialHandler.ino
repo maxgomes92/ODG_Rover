@@ -10,8 +10,7 @@ BlueTooth(rx, tx) {
   while(BlueTooth.available())  BlueTooth.read();  // empty RX buffer
 }
 
-AndroidComm::~AndroidComm() {
-}
+AndroidComm::~AndroidComm() {}
 
 String AndroidComm::readString() {
   if (BlueTooth.available()) {
@@ -37,8 +36,7 @@ UbuntuComm::UbuntuComm(int baud) {
   Serial.begin(baud);  
 }
 
-UbuntuComm::~UbuntuComm() {
-}
+UbuntuComm::~UbuntuComm() {}
 
 String UbuntuComm::readString() {
   if(Serial.available()>0) {
@@ -50,7 +48,10 @@ String UbuntuComm::readString() {
 }
 
 void UbuntuComm::print(String msg) {
-  String foo = "]";
+  // Char to indicate when the Ubuntu has to consider
+  // the message. Because it also gets the message that
+  // goes to the Android
+  String foo = "]"; 
   foo.concat(msg);
   Serial.println(foo);
 }

@@ -10,7 +10,11 @@ class AndroidComm {
   
   // Gets message from Android device and return it  
   String readString(); 
+  
+  // Prints string to Android without \n
   void print(String msg);
+  
+  // Prints string to Android with \n
   void println(String msg); 
   
   private:
@@ -23,11 +27,14 @@ class UbuntuComm {
     UbuntuComm(int baud);
     ~UbuntuComm();
    
-    String readString(); // Gets message from Cpp code and return it
+    // Gets message from Odroid(Ubuntu) and return it
+    String readString(); 
+    
+    // Prints message through serial to Odroid
     void print(String msg);
   
   private:
-    int _baud;
+    int _baud; // baud rate
 };
 
 #endif // SERIALHANDLER_H

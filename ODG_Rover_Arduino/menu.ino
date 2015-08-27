@@ -22,14 +22,7 @@ void menuEngine(AndroidComm& And, UbuntuComm& Ubu) {
   String msg = NULL;
   String chosenFile[2];
 
-  //while(msg == NULL) {    
-  if((msg = And.readString()) != NULL) {
-    //while((msg = And.readString()) == NULL);
-    if(msg.equals("menu")) {
-      And.println("-----------------------------");
-      printMenu(And, Ubu);
-    }
-    
+  if((msg = And.readString()) != NULL) {   
     if(msg.length() == 1) {
       char opt = msg[0];
           
@@ -64,7 +57,10 @@ void menuEngine(AndroidComm& And, UbuntuComm& Ubu) {
         clearBuffer(Ubu);
         Ubu.print(String(opt));
         while((msg = Ubu.readString()) == NULL);
-        if(msg == "false") And.println("No CSV file has been opened yet.");
+        if(msg == "false") {
+          And.println("No CSV file has been opened yet.");
+          And.println("-----------------------------");
+        }
         else if(msg == "true") {
           And.println("Starting to stream... type in 'stop'.");
           while(!((And.readString()) == "stop")) {
@@ -114,8 +110,13 @@ void menuEngine(AndroidComm& And, UbuntuComm& Ubu) {
       }
     } else {
       // For more than 1 character input
-      And.println("Invalid input.");
-      And.println("-----------------------------");       
+      if(msg.equals("menu")) {
+        And.println("-----------------------------");
+        printMenu(And, Ubu);
+      } else {            
+        And.println("1Invalid input.");
+        And.println("-----------------------------");       
+      }
     }
   }
 }
@@ -134,11 +135,13 @@ int getChosenFile(String files[2], AndroidComm& And, UbuntuComm& Ubu) {
 
   And.println("- File list (type in file number):");
 
-  // Gets file names from Python
+  // Gets file names from Python and prints to Android
   String fileNames[nFiles];
+  And.println("0None");
   for(int i=0; i < nFiles; i++) {
     while((fileNames[i] = Ubu.readString()) == NULL);
-    And.println(fileNames[i]);
+    String temp = String(i+1) + fileNames[i];
+    And.println(temp);
   }
 
   // Gets chosen file and send it to Python
