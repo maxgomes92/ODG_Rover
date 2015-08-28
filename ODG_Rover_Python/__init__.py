@@ -3,10 +3,11 @@ import sys, inspect, os, signal
 
 from ArduinoComm import *
 from menu import *
+from settings import *
 
 def main():
 	# Sets up communication with Arduino
-	Ard = ArduinoComm("/dev/ttyACM0", 9600)
+	Ard = ArduinoComm(USB_Arduino, Baud_Arduino)
 	
 	# List to hold files name
 	toStream = ['',''] # [0] baseline / [1] position	
@@ -24,7 +25,7 @@ def main():
 			if opt != '':			
 				# Opens Piksi Console - .../ODG_Rover/piksi_tools
 				if opt[0] == "1":
-					path = "xterm -e 'cd " + root_path + "/piksi_tools && python piksi_tools/console/console.py -p /dev/ttyUSB0'"
+					path = "xterm -e 'cd " + root_path + "/piksi_tools && python piksi_tools/console/console.py -p " + USB_Piksi + "'"
 					console = subprocess.Popen([path], shell=True, stdin=None, 
 					stderr=None, close_fds=True, preexec_fn=os.setsid)					
 					print "Console opened."

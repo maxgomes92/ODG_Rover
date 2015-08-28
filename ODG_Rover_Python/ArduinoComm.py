@@ -1,4 +1,4 @@
-import serial
+import serial, sys
 
 class ArduinoComm:
 	# Sets up serial communication with Arduino
@@ -6,14 +6,18 @@ class ArduinoComm:
 		self.port = serialpath
 		self.baud = baud
 		
-		self.ard = serial.Serial (
-			port = serialpath,
-			baudrate = baud,
-			parity = serial.PARITY_NONE,
-			stopbits = serial.STOPBITS_ONE,
-			bytesize = serial.EIGHTBITS,
-			timeout=0.3
-			)
+		try:
+			self.ard = serial.Serial (
+				port = serialpath,
+				baudrate = baud,
+				parity = serial.PARITY_NONE,
+				stopbits = serial.STOPBITS_ONE,
+				bytesize = serial.EIGHTBITS,
+				timeout=0.3
+				)
+		except SerialException:
+			print "Could not stabilish Arduino communication! Aborting..."
+			sys.exit()
 		
 		while self.ard.readline() != "": continue	
 		print "Connected to ", self.ard.name

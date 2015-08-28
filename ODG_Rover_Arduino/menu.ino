@@ -114,7 +114,7 @@ void menuEngine(AndroidComm& And, UbuntuComm& Ubu) {
         And.println("-----------------------------");
         printMenu(And, Ubu);
       } else {            
-        And.println("1Invalid input.");
+        And.println("Invalid input.");
         And.println("-----------------------------");       
       }
     }
