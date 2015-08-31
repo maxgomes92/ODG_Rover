@@ -7,6 +7,7 @@ void printMenu(AndroidComm& And, UbuntuComm& Ubu) {
     "3. Delete all CSV files\n"
     "4. Start Streamming\n"
     "5. Save a spot\n"
+    "6. Delete spots files\n"
     "9. Reset Python Code\n"
     "0. Shut down ODROID\n");
 
@@ -85,6 +86,19 @@ void menuEngine(AndroidComm& And, UbuntuComm& Ubu) {
           And.println("Spot has been saved.");
           And.println("-----------------------------");            
         }
+      }
+      
+      else if(msg.equals("6")) {
+        clearBuffer(Ubu);
+        Ubu.print(String(opt));
+        while((msg = Ubu.readString()) == NULL);
+        if(msg == "true") {
+          And.println("Files have been deleted.");
+          And.println("-----------------------------");
+        } else {
+          And.println("No file has been deleted.");
+          And.println("-----------------------------");
+        } 
       }
       
       // Stops code. It will be reset by ODG_Rover_Python/startup_code.py  

@@ -16,7 +16,7 @@ def main():
 	python_path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 	root_path = ""
 	root_path = python_path[:len(root_path)-17]	# Removing last folder's name
-	
+		
 	# Receives Instruction from Arduino
 	try:	
 		while True:
@@ -62,6 +62,19 @@ def main():
 					else:
 						Ard.write("true")
 						saveSpot(toStream, root_path)
+				
+				# Deletes files used to save spots		
+				elif opt[0] == "6":
+					i=0
+					path = str(root_path + "/ODG_Rover_Python/log/")
+					for file in os.listdir(path):
+						cmd = "xterm -e 'rm " + path + file + "'"
+						subprocess.call(cmd, shell=True)
+						i+=1
+					if i > 0:
+						Ard.write("true")
+					else:
+						Ard.write("false")								
 				
 				# Stops code. It will be reset by ./startup_code.py		
 				elif opt[0] == "9":
