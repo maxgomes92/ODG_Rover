@@ -8,6 +8,7 @@ void printMenu(AndroidComm& And, UbuntuComm& Ubu) {
     "4. Start Streamming\n"
     "5. Save a spot\n"
     "6. Delete spots files\n"
+    "7. Toggle manual/automatic\n"
     "9. Reset Python Code\n"
     "0. Shut down ODROID\n");
 
@@ -99,6 +100,26 @@ void menuEngine(AndroidComm& And, UbuntuComm& Ubu) {
           And.println("No file has been deleted.");
           And.println("-----------------------------");
         } 
+      }
+      
+      else if(msg.equals("7")) {
+        clearBuffer(Ubu);
+        if(And._RC == 1) {
+          Ubu.print(String(opt));     
+          while((msg = Ubu.readString()) == NULL);          
+          if(msg == "true") {
+            And._RC = 0;            
+            And.println("Robot set to automatic drive.");
+            And.println("-----------------------------");           
+          } else {
+            And.println("No spot has been saved yet.");
+            And.println("-----------------------------");                       
+          }
+        } else {
+          And._RC = 1;
+          And.println("Robot set to manual drive.");
+          And.println("-----------------------------");                   
+        }
       }
       
       // Stops code. It will be reset by ODG_Rover_Python/startup_code.py  

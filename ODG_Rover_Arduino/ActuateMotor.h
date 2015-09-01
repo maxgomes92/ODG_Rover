@@ -16,5 +16,6 @@
 
 // Receives RC signals and interprets them
 void ActuateRobot(int RC_Signal[], Motor M1, Motor M2, Motor M3, Motor M4);
+void AutoRobot(int RC_Signal[], Motor M1, Motor M2, Motor M3, Motor M4, AndroidComm& And, UbuntuComm& Ubu);
 
 #endif // ACTUATEMOTOR_H

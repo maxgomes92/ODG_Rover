@@ -66,11 +66,11 @@ def streamFile(file_names, Ard, root_path):
 		msg = msg[:len(msg)-1]
 		msg = msg.split(',')
 		
-		# Vectors
+		# Distances between base and rover
 		N = msg[1] # North
 		E = msg[2] # East
 		D = msg[3] # Down distance
-		Dist = float(msg[4]) # Distance between Base and Rover
+		Dist = float(msg[4]) # Distance
 		nSat = msg[5] # N of satelites
 		Flag = msg[6][3:4] # Mode (0 = float, 1 = fixed RTK)
 		toPrint = "D:" + "%.4f" % Dist + " nS:" + nSat + " F:" + Flag
@@ -91,15 +91,21 @@ def streamFile(file_names, Ard, root_path):
 	
 	Ard.write(toPrint)
 	
-def saveSpot(toStream, root_path):
+def saveSpot(toStream, root_path, spotsSaved):
 	path = str(root_path + "/ODG_Rover_Python/log/baseline_spots.csv")
 	baseline = open(path, "a")	
-	toAppend = getLastLine(toStream[0], root_path)
-	baseline.write(toAppend)	
+	msg = getLastLine(toStream[0], root_path)
+	baseline.write(msg)	
 	
+	msg = msg[:len(msg)-1]
+	msg = msg.split(',')
+	spotsSaved.append([msg[1],msg[2]])
+	
+	###
 	path = str(root_path + "/ODG_Rover_Python/log/potision_spots.csv")
 	position = open(path, "a")
 	toAppend = getLastLine(toStream[1], root_path)
 	position.write(toAppend)
+	
 	
 	

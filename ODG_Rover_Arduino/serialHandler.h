@@ -15,7 +15,9 @@ class AndroidComm {
   void print(String msg);
   
   // Prints string to Android with \n
-  void println(String msg); 
+  void println(String msg);
+ 
+    int _RC; 
   
   private:
     int _rx, _tx, _baud;

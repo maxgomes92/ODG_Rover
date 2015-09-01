@@ -126,3 +126,40 @@ void ActuateRobot(int RC_Signal[], Motor M1, Motor M2, Motor M3, Motor M4) {
   //Serial.print(" ");
   //Serial.println(pwmSteerWheel);
 }
+
+void AutoRobot(int RC_Signal[], Motor M1, Motor M2, Motor M3, Motor M4, AndroidComm& And, UbuntuComm& Ubu) {
+  String msg = Ubu.readString();
+  
+  int pwm=0;
+  int toSteer = RC_Signal[1];
+  int toSpeedUP = RC_Signal[1];  
+  
+  if(toSpeedUP > 800 || toSpeedUP < 1800) {
+  } else if(msg == "fw") {
+    pwm = map(toSpeedUP, minFw, maxFw, 20, 200);
+    M1.Forward(pwm);
+    M2.Forward(pwm);
+    M3.Forward(pwm);
+    M4.Forward(pwm); 
+    //And.println("Forward.");
+  } else if(msg == "bw") {
+    pwm = map(toSpeedUP, maxBw, minBw, 20, 200);   
+    M1.Backward(pwm);
+    M2.Backward(pwm);
+    M3.Backward(pwm);
+    M4.Backward(pwm);    
+  } else if(msg == "tr") {
+    pwm = map(toSteer, minTnRight, maxTnRight, 0, 200);   
+    M1.Backward(pwm);
+    M3.Backward(pwm);
+    M2.Forward(pwm);
+    M4.Forward(pwm);    
+    //And.println("Turn right.");
+  } else if(msg == "tl") {
+    pwm = map(toSteer, maxTnLeft, minTnLeft, 0, 200);   
+    M2.Backward(pwm);
+    M4.Backward(pwm);
+    M1.Forward(pwm);
+    M3.Forward(pwm);    
+  }
+}

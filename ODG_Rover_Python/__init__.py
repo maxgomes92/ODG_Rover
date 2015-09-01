@@ -6,6 +6,12 @@ from menu import *
 from settings import *
 
 def main():
+	AutoRobot = False
+	
+	# To save spots
+	spotsSaved = []
+	spotsSaved.append(['22.3','33.4'])
+	
 	# Sets up communication with Arduino
 	Ard = ArduinoComm(USB_Arduino, Baud_Arduino)
 	
@@ -16,6 +22,9 @@ def main():
 	python_path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 	root_path = ""
 	root_path = python_path[:len(root_path)-17]	# Removing last folder's name
+	
+	# Initiating dicionary to store Robot coordinates
+	RobotCoord = {'N':0,'S':0}
 		
 	# Receives Instruction from Arduino
 	try:	
@@ -61,7 +70,7 @@ def main():
 						Ard.write("false")
 					else:
 						Ard.write("true")
-						saveSpot(toStream, root_path)
+						saveSpot(toStream, root_path, spotsSaved)
 				
 				# Deletes files used to save spots		
 				elif opt[0] == "6":
@@ -74,9 +83,16 @@ def main():
 					if i > 0:
 						Ard.write("true")
 					else:
-						Ard.write("false")								
-				
-				# Stops code. It will be reset by ./startup_code.py		
+						Ard.write("false")	
+						
+				elif opt[0] == "7":
+					if spotsSaved == []:
+						Ard.write("false") 
+					else:
+						Ard.write("true")
+						AutoRobot = True					
+																	
+				# Stops code. It will be reset if you called ./startup_code.py		
 				elif opt[0] == "9":
 					print "Closing console."
 					os.killpg(console.pid, signal.SIGTERM)					
@@ -90,11 +106,16 @@ def main():
 				# Invalid input
 				else: 
 					print "Invalid input"
+			
+			if AutoRobot:
+				AutoRobot()		
 	except KeyboardInterrupt:
 		sys.exit()
 			
 main()
 
+def AutoRobot():
+	x=2
 	
 	
 

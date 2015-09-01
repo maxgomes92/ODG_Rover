@@ -5,6 +5,7 @@ BlueTooth(rx, tx) {
   _rx = rx;
   _tx = tx;
   _baud = baud;
+  _RC = 1; // Set Robot to manual drive
 
   BlueTooth.begin(baud);
   while(BlueTooth.available())  BlueTooth.read();  // empty RX buffer
