@@ -18,7 +18,7 @@ def main():
 	
 	# List to hold files name
 	toStream = ['',''] # [0] baseline / [1] position	
-	#toStream = [['baseline_log_20150901-120658.csv\r\n'], ['position_log_20150901-120658.csv\r\n']]
+	#toStream = [['baseline_log_20150903-094916.csv\r\n'], ['position_log_20150903-094916.csv\r\n']]
 	
 	# Finds out its own path
 	python_path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -73,6 +73,7 @@ def main():
 						while "stop" not in msg:
 							streamFile(Ard, RobotCoord, toStream)
 							msg = Ard.read()
+							time.sleep(0.5)
 						print "Stream stop requested."
 				
 				# Saves the current spot to a file		

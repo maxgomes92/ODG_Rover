@@ -61,7 +61,7 @@ def streamFile(Ard, RobotCoord, file_names):
 	toPrint = ""
 	
 	if file_names[0] != ['']:
-		toPrint = "D:" + "%.4f" % RobotCoord['Dist'] + " nS:" + RobotCoord['nSat'] + " F:" + RobotCoord['Flag']
+		toPrint = "N:%.2f " % RobotCoord['N'] + "E:%.2f" % RobotCoord['E'] + " nS:%i" % RobotCoord['nSat'] + " F:%i" % RobotCoord['Flag']
 	
 	if file_names[1] != ['']:
 		if file_names[0] != ['']:
