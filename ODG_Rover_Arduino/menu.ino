@@ -110,8 +110,8 @@ void menuEngine(AndroidComm& And, UbuntuComm& Ubu) {
       
       else if(msg.equals("7")) {
         clearBuffer(Ubu);
-        if(And._RC == 1) {
-          Ubu.print(String(opt));     
+        Ubu.print(String(opt)); 
+        if(And._RC == 1) {              
           while((msg = Ubu.readString()) == NULL);          
           if(msg == "true") {
             And._RC = 0;            
@@ -122,7 +122,7 @@ void menuEngine(AndroidComm& And, UbuntuComm& Ubu) {
             And.println("-----------------------------");                       
           }
         } else {
-          And._RC = 1;
+          And._RC = 1;          
           And.println("Robot set to manual drive.");
           And.println("-----------------------------");                   
         }

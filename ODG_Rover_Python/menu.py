@@ -79,8 +79,8 @@ def saveSpot(toStream, root_path, spotsSaved):
 	
 	msg = msg[:len(msg)-1]
 	msg = msg.split(',')
-	spotsSaved['N'] = msg[1]
-	spotsSaved['E'] = msg[2]
+	spotsSaved['N'] = float(msg[1])
+	spotsSaved['E'] = float(msg[2])
 	
 	path = str(root_path + "/ODG_Rover_Python/log/potision_spots.csv")
 	position = open(path, "a")

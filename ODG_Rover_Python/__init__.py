@@ -27,7 +27,7 @@ def main():
 	
 	# Initiating dicionary to store Robot coordinates
 	RobotCoord = {'N':0, 'E':0, 'D':0, 'Dist':0, 'nSat':0, 'Flag':0, 'Lat':0, 'Lon':0}
-	#oldRobotCoord = {'N':-9.0, 'E':8.0}
+	oldRobotCoord = {'N':0, 'E':0}
 		
 	# Receives Instruction from Arduino
 	try:	
@@ -71,6 +71,7 @@ def main():
 						msg = ''
 						print "Starting to stream..."
 						while "stop" not in msg:
+							updateRobotCoord(RobotCoord, toStream, root_path)
 							streamFile(Ard, RobotCoord, toStream)
 							msg = Ard.read()
 							time.sleep(0.5)
@@ -101,8 +102,11 @@ def main():
 					if spotsSaved == {}:
 						Ard.write("false") 
 					else:
-						Ard.write("true")
-						AutoDrive = True					
+						if AutoDrive:
+							AutoDrive = False
+						else:
+							Ard.write("true")
+							AutoDrive = True					
 																	
 				# Stops code. It will be reset if you called ./startup_code.py		
 				elif opt[0] == "9":
