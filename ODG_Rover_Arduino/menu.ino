@@ -32,8 +32,14 @@ void menuEngine(AndroidComm& And, UbuntuComm& Ubu) {
       if(msg.equals("1")) {
         clearBuffer(Ubu); // Clears buffer (from Odroid to Arduino)
         Ubu.print(String(opt)); // Sends instruction to Odroid/Ubuntu
-        And.println("Console running..."); // Prints to the Android
-        And.println("-----------------------------");         
+        while((msg = Ubu.readString()) == NULL);
+        if(msg == "true") {
+          And.println("Console running..."); // Prints to the Android
+          And.println("-----------------------------");         
+        } else if(msg == "false") {
+          And.println("Wrong USB port!");
+          And.println("-----------------------------");         
+        }
       }         
       
       // Chooses CSV log files

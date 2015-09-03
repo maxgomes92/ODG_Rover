@@ -57,37 +57,17 @@ def getLastLine(filename, root_path):
 		
 	return last_line
 	
-def streamFile(file_names, Ard, root_path):
+def streamFile(Ard, RobotCoord, file_names):
 	toPrint = ""
 	
 	if file_names[0] != ['']:
-		# ---------- 'baseline' file
-		msg = getLastLine(file_names[0], root_path);
-		msg = msg[:len(msg)-1]
-		msg = msg.split(',')
-		
-		# Distances between base and rover
-		N = msg[1] # North
-		E = msg[2] # East
-		D = msg[3] # Down distance
-		Dist = float(msg[4]) # Distance
-		nSat = msg[5] # N of satelites
-		Flag = msg[6][3:4] # Mode (0 = float, 1 = fixed RTK)
-		toPrint = "D:" + "%.4f" % Dist + " nS:" + nSat + " F:" + Flag
+		toPrint = "D:" + "%.4f" % RobotCoord['Dist'] + " nS:" + RobotCoord['nSat'] + " F:" + RobotCoord['Flag']
 	
 	if file_names[1] != ['']:
 		if file_names[0] != ['']:
 			toPrint = toPrint + "\n"
-			
-		# ---------- 'Position' file
-		msg = getLastLine(file_names[1], root_path)
-		msg = msg[:len(msg)-1]
-		msg = msg.split(',')
-		
-		# Coordinates
-		Lat = float(msg[1])
-		Lon = float(msg[2])
-		toPrint = toPrint + ("Lt:%.6f" % Lat + " Lg:%.6f" % Lon)
+
+		toPrint = toPrint + ("Lt:%.6f" % RobotCoord['Lat'] + " Lg:%.6f" % RobotCoord['Lon'])
 	
 	Ard.write(toPrint)
 	
@@ -99,13 +79,40 @@ def saveSpot(toStream, root_path, spotsSaved):
 	
 	msg = msg[:len(msg)-1]
 	msg = msg.split(',')
-	spotsSaved.append([msg[1],msg[2]])
+	spotsSaved['N'] = msg[1]
+	spotsSaved['E'] = msg[2]
 	
-	###
 	path = str(root_path + "/ODG_Rover_Python/log/potision_spots.csv")
 	position = open(path, "a")
 	toAppend = getLastLine(toStream[1], root_path)
 	position.write(toAppend)
 	
+def updateRobotCoord(RobotCoord, file_names, root_path):
+	if file_names[0] != ['']:
+		# ---------- 'baseline' file
+		msg = getLastLine(file_names[0], root_path);
+		msg = msg[:len(msg)-1]
+		msg = msg.split(',')
+		
+		# Distances between base and rover
+		RobotCoord['N']= float(msg[1]) # North
+		RobotCoord['E'] = float(msg[2]) # East
+		RobotCoord['D'] = float(msg[3]) # Down distance
+		RobotCoord['Dist'] = float(msg[4]) # Distance
+		RobotCoord['nSat'] = int(msg[5]) # N of satelites
+		RobotCoord['Flag'] = int(msg[6][3:4]) # Mode (0 = float, 1 = fixed RTK)	
+
+	if file_names[1] != ['']:
+			
+		# ---------- 'Position' file
+		msg = getLastLine(file_names[1], root_path)
+		msg = msg[:len(msg)-1]
+		msg = msg.split(',')
+		
+		# Coordinates
+		RobotCoord['Lat'] = float(msg[1])
+		RobotCoord['Lon'] = float(msg[2])
 	
 	
+	
+		

@@ -13,9 +13,9 @@ class ArduinoComm:
 				parity = serial.PARITY_NONE,
 				stopbits = serial.STOPBITS_ONE,
 				bytesize = serial.EIGHTBITS,
-				timeout=0.3
+				timeout=0.1
 				)
-		except SerialException:
+		except serial.serialutil.SerialException:
 			print "Could not stabilish Arduino communication! Aborting..."
 			sys.exit()
 		

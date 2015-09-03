@@ -10,7 +10,7 @@
 // Motor pins
 #define M1_inA 2
 #define M1_inB 10
-#define M1_PWM 6
+#define M1_PWM 5
 
 #define M2_inA 7
 #define M2_inB 4

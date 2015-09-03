@@ -1,22 +1,24 @@
 import subprocess, time
-import sys, inspect, os, signal
+import sys, inspect, os, signal, serial
 
 from ArduinoComm import *
 from menu import *
 from settings import *
+from AutoRobot import *
 
 def main():
-	AutoRobot = False
+	AutoDrive = False
 	
 	# To save spots
-	spotsSaved = []
-	spotsSaved.append(['22.3','33.4'])
+	spotsSaved = {}
+	#spotsSaved = {'N':-10.0,'E':10.0}
 	
 	# Sets up communication with Arduino
 	Ard = ArduinoComm(USB_Arduino, Baud_Arduino)
 	
 	# List to hold files name
 	toStream = ['',''] # [0] baseline / [1] position	
+	#toStream = [['baseline_log_20150901-120658.csv\r\n'], ['position_log_20150901-120658.csv\r\n']]
 	
 	# Finds out its own path
 	python_path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -24,7 +26,8 @@ def main():
 	root_path = python_path[:len(root_path)-17]	# Removing last folder's name
 	
 	# Initiating dicionary to store Robot coordinates
-	RobotCoord = {'N':0,'S':0}
+	RobotCoord = {'N':0, 'E':0, 'D':0, 'Dist':0, 'nSat':0, 'Flag':0, 'Lat':0, 'Lon':0}
+	#oldRobotCoord = {'N':-9.0, 'E':8.0}
 		
 	# Receives Instruction from Arduino
 	try:	
@@ -34,10 +37,17 @@ def main():
 			if opt != '':			
 				# Opens Piksi Console - .../ODG_Rover/piksi_tools
 				if opt[0] == "1":
-					path = "xterm -e 'cd " + root_path + "/piksi_tools && python piksi_tools/console/console.py -p " + USB_Piksi + "'"
-					console = subprocess.Popen([path], shell=True, stdin=None, 
-					stderr=None, close_fds=True, preexec_fn=os.setsid)					
-					print "Console opened."
+					try:
+						piksi = serial.Serial(port = USB_Piksi)	# Testing if piksi is connected to correct USB port
+						piksi.close()
+						path = "xterm -e 'cd " + root_path + "/piksi_tools && python piksi_tools/console/console.py -p " + USB_Piksi + "'"
+						console = subprocess.Popen([path], shell=True, stdin=None, 
+						stderr=None, close_fds=True, preexec_fn=os.setsid)					
+						print "Console opened."	
+						Ard.write("true")					
+					except serial.serialutil.SerialException:
+						Ard.write("false")
+						print "Piksi on wrong USB port!"
 				
 				# Chooses CSV log files
 				elif opt[0] == "2": 
@@ -49,6 +59,7 @@ def main():
 						
 				# Deletes all CSV files
 				elif opt[0] == "3":
+					toStream = ['','']
 					deleteCSV(Ard, root_path)
 				
 				# Streams CSV files
@@ -60,7 +71,7 @@ def main():
 						msg = ''
 						print "Starting to stream..."
 						while "stop" not in msg:
-							streamFile(toStream, Ard, root_path)
+							streamFile(Ard, RobotCoord, toStream)
 							msg = Ard.read()
 						print "Stream stop requested."
 				
@@ -86,11 +97,11 @@ def main():
 						Ard.write("false")	
 						
 				elif opt[0] == "7":
-					if spotsSaved == []:
+					if spotsSaved == {}:
 						Ard.write("false") 
 					else:
 						Ard.write("true")
-						AutoRobot = True					
+						AutoDrive = True					
 																	
 				# Stops code. It will be reset if you called ./startup_code.py		
 				elif opt[0] == "9":
@@ -107,15 +118,19 @@ def main():
 				else: 
 					print "Invalid input"
 			
-			if AutoRobot:
-				AutoRobot()		
+			# Updates RobotCoord dictionary	
+			if toStream[0] != '' or toStream[1] != '':	
+				updateRobotCoord(RobotCoord, toStream, root_path)			
+			
+			# Activates Path planning
+			if AutoDrive:
+				AutoRobot(RobotCoord, oldRobotCoord, spotsSaved, Ard)				
+			
 	except KeyboardInterrupt:
 		sys.exit()
 			
 main()
 
-def AutoRobot():
-	x=2
 	
 	
 
