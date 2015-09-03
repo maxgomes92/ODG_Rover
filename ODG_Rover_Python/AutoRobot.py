@@ -1,5 +1,9 @@
 import time, math
 
+# This function compair the angle the Robot went to the angle it should have gone. 
+# Then it attempts to correct this difference by rotating itself. The first angle is 
+# calculated by relating the current position to the previous position and the second 
+# by relation the destination to the previous position as well.
 def AutoRobot(RobotCoord, oldRobotCoord, spotsSaved, Ard):
 	N_to_Dest = abs(RobotCoord['N'] - spotsSaved['N']) > 0.5
 	E_to_Dest = abs(RobotCoord['E'] - spotsSaved['E']) > 0.5
@@ -63,7 +67,8 @@ def AutoRobot(RobotCoord, oldRobotCoord, spotsSaved, Ard):
 			Ard.write("fw")		
 	else:						
 		print "On right spot!!" # added
-		
+
+# It calculate the angle between a coordinate and the X axis. 
 def calcAngle(coord):
 	# 1st quadrant
 	if coord[0] > 0 and coord[1] >= 0:

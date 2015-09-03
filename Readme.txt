@@ -1,5 +1,8 @@
 /////// INSTRUCTIONS TO GET && RUN THE SOFTWARE ////////
 
+Developed by: Maximiliano Gomes (dossantm@mail.uoguelph.ca)
+Date: 3 sept. 2015
+
 // ------------------ GENERAL
 This software was developed to integrate the Odroid with the Arduino.
 Both will be placed in the Rover Robot.
@@ -68,6 +71,8 @@ If everything is OK, you will receive this on your Android app:
 3. Delete all CSV files
 4. Start Streamming
 5. Save a spot
+6. Delete spot's file
+7. Toggle manual/automatic
 9. Reset Python Code
 0. Shut down ODROID
 
@@ -80,9 +85,16 @@ Functions:
 3- Deletes all CSV log files placed at .../ODG_Rover/piksi_console/*.csv
 4. Starts streamming the CSV log files chosen in option 3.
 5. Saves the current log data from the CSV log files chosen in option 3.
+6. Delete the files that stores the spots saved. .../ODG_Rover/ODG_Rover_Python/log/*.csv 
+7. Enable/Disable automatic drive. It will make the robot reach the first spot saved.
 9. Resets the Python code. You will receive the menu again after reseting it.
 0. Shuts down the ODROID (requires SUDO).
 
-If you want to test in, after running the console, goes to Settings and 
-enable the simulation mode by switching it to True.
+- Type in "1" in the Bluetooth terminal and send it.
+- If the Arduino is correctly connected to the Ubuntu, you will
+receive "Wrong USB port!"
+- Now you can connect the Piksi to the Odroid.
+
+For testing the CSV streamming and spot saving, after running the console, goes 
+to Settings and enable the simulation mode by switching it to True.
 For more info: http://docs.swiftnav.com/wiki/Piksi_User_Getting_Started_Guide

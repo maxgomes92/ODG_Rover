@@ -14,8 +14,10 @@
 #define minTnLeft 920
 
 
-// Receives RC signals and interprets them
+// Receives RC signals and sends it to the motor drivers
 void ActuateRobot(int RC_Signal[], Motor M1, Motor M2, Motor M3, Motor M4);
+
+// Receives direction instructions from the Ubuntu and actuate the motors (speed is received by the RC)
 void AutoRobot(int RC_Signal[], Motor M1, Motor M2, Motor M3, Motor M4, AndroidComm& And, UbuntuComm& Ubu);
 
 #endif // ACTUATEMOTOR_H

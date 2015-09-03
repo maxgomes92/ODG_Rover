@@ -3,6 +3,7 @@
 
 #define debug 0
 
+// Receives RC signals and sends it to the motor drivers
 void ActuateRobot(int RC_Signal[], Motor M1, Motor M2, Motor M3, Motor M4) {
   int pwm=0;
   int pwmSteerWheel=0;
@@ -119,9 +120,10 @@ void ActuateRobot(int RC_Signal[], Motor M1, Motor M2, Motor M3, Motor M4) {
   }
 }
 
+// Receives direction instructions from the Ubuntu and actuate the motors (speed is received by the RC)
 void AutoRobot(int RC_Signal[], Motor M1, Motor M2, Motor M3, Motor M4, AndroidComm& And, UbuntuComm& Ubu) {
-  String msg = Ubu.readString();
-  if (msg == NULL) return;
+  String msg = Ubu.readString(); // Receives instruction from Ubuntu
+  if (msg == NULL) return; // Return if nothing is received
   
   int pwm=0;
   int toSpeedUP = RC_Signal[1];  

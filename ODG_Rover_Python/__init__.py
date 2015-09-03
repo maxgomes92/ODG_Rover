@@ -7,18 +7,17 @@ from settings import *
 from AutoRobot import *
 
 def main():
+	# When false, means robot will be fully controlled by RC
 	AutoDrive = False
 	
-	# To save spots
+	# To save spots (they will be used to tell the Robot which place to go autonomouslly)
 	spotsSaved = {}
-	#spotsSaved = {'N':-10.0,'E':10.0}
 	
 	# Sets up communication with Arduino
 	Ard = ArduinoComm(USB_Arduino, Baud_Arduino)
 	
 	# List to hold files name
 	toStream = ['',''] # [0] baseline / [1] position	
-	#toStream = [['baseline_log_20150903-094916.csv\r\n'], ['position_log_20150903-094916.csv\r\n']]
 	
 	# Finds out its own path
 	python_path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -32,7 +31,9 @@ def main():
 	# Receives Instruction from Arduino
 	try:	
 		while True:
+			# Attempts to receive instruction from Arduino
 			opt = Ard.read()
+			
 			# Processes instruction
 			if opt != '':			
 				# Opens Piksi Console - .../ODG_Rover/piksi_tools
@@ -97,7 +98,10 @@ def main():
 						Ard.write("true")
 					else:
 						Ard.write("false")	
-						
+				
+				# Start autonomous mobility
+				# CSV files must have been selected before (Option 2)			
+				# There must be at least 1 spot saved (Option 5)
 				elif opt[0] == "7":
 					if spotsSaved == {}:
 						Ard.write("false") 
@@ -115,6 +119,7 @@ def main():
 					sys.exit("--- Exiting program. ---")
 						
 				# Turns off Odroid
+				# Must run code as root!
 				elif opt[0] == "0":
 					os.system("shutdown -h")
 					print "System shutting down..."
@@ -127,11 +132,11 @@ def main():
 			if toStream[0] != '' or toStream[1] != '':	
 				updateRobotCoord(RobotCoord, toStream, root_path)			
 			
-			# Activates Path planning
+			# Autonomous mobility
 			if AutoDrive:
 				AutoRobot(RobotCoord, oldRobotCoord, spotsSaved, Ard)				
 			
-	except KeyboardInterrupt:
+	except KeyboardInterrupt: # In case you CTRL+C on terminal
 		sys.exit()
 			
 main()

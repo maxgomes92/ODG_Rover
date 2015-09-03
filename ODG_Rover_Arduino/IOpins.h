@@ -7,7 +7,9 @@
 // Ubuntu settings
 #define Baud_Ubu 9600
 
-// Motor pins
+// Driver pins
+// The enable pins (M1EN/M2EN) from the drivers are directly connected to 5V.
+// M1CS/M2CS can be used to read the current being consumed by the motors
 #define M1_inA 2
 #define M1_inB 10
 #define M1_PWM 5
@@ -16,12 +18,12 @@
 #define M2_inB 4
 #define M2_PWM 6
 
-#define M3_inA 15
-#define M3_inB 14
+#define M3_inA 15 // A1
+#define M3_inB 14 // A0
 #define M3_PWM 9
 
-#define M4_inA 17
-#define M4_inB 16
+#define M4_inA 17 // A3
+#define M4_inB 16 // A2
 #define M4_PWM 3
 
 // Receiver pins

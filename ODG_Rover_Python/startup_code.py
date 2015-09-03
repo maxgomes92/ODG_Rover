@@ -1,9 +1,8 @@
 import inspect, os, subprocess, sys
 
 def start():
-	python_path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) # script directory
-	root_path = ""
-	root_path = python_path[:len(root_path)-17]	
+	# Finds out its own path
+	python_path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 	
 	while True:
 		try:

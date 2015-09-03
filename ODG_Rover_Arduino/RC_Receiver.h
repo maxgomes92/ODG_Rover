@@ -4,7 +4,7 @@
 #include "Motor.h"
 #include "IOpins.h"
 
-// Receives RC signals and interprets them
+// Receives RC signals
 void RC_Receiver(int * ch);
 
 #endif // RC_RECEIVER_H

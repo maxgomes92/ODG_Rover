@@ -1,5 +1,6 @@
 #include "menu.h"
 
+// Prints menu to Android and calls menuEngine()
 void printMenu(AndroidComm& And, UbuntuComm& Ubu) {
   And.print("--> Piksi Integration Software\n"
     "1. Run Console\n"
@@ -15,11 +16,14 @@ void printMenu(AndroidComm& And, UbuntuComm& Ubu) {
   menuEngine(And, Ubu); 
 }
 
+// Clear any data in the buffer between the Odroid(Ubuntu) and the Arduino
 void clearBuffer(UbuntuComm& Ubu) {
     String msg = Ubu.readString();
     while(!((msg = Ubu.readString()) == NULL));  
 }
 
+// Gets input from Android and treats it.
+// If required, it dealls with the Odroid.
 void menuEngine(AndroidComm& And, UbuntuComm& Ubu) {
   String msg = NULL;
   String chosenFile[2];
@@ -162,6 +166,8 @@ void menuEngine(AndroidComm& And, UbuntuComm& Ubu) {
   }
 }
 
+// Gets the chosen CSV log file, returns zero if, for any reason,
+// no valid file is chosen. Returns 1 if it succeed.
 int getChosenFile(String files[2], AndroidComm& And, UbuntuComm& Ubu) {
   int nFiles;
   String msg = NULL;

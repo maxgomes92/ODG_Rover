@@ -8,12 +8,12 @@
 // Odroid <USB> Arduino <BLUETOOTH> Android
 
 void setup() {
+  // Sets up Remote Controller pins (RC)
   pinMode(RC_Motor, INPUT);
   pinMode(RC_Steer, INPUT); 
 }
 
 void loop() {
-  int RC=1; 
   int CH[2]; // Int to receive RC signals
   
   // Object for Android communication
@@ -39,6 +39,6 @@ void loop() {
     RC_Receiver(CH); // CH[0] for Steering / CH[1] for Motors     
     
     if(And._RC) ActuateRobot(CH, M1, M2, M3, M4); // Manual drive
-    else AutoRobot(CH, M1, M2, M3, M4, And, Ubu);
+    else AutoRobot(CH, M1, M2, M3, M4, And, Ubu); // Auto drive (RC needed for speed control)
   }
 }

@@ -1,0 +1,65 @@
+//// TEST PROPOSAL /////
+
+I haven't tested the autonomous mobility with real GPS data,
+just with the Console simulation enabled.
+So I would like to write what has to be in order to test it.
+
+Overview:
+	This test consists driving the robot to a desired position,
+	saving it, then drive the robot back and let it achieve the
+	same position by itself.
+	
+Equipments:
+	- Rover robot (4x DC motors, 2x Motor Drivers)
+	- Arduino nano (1 HC-06 bluetooth device, Futaba RC receiver)
+	- Odroid (Ubuntu)
+	- 2x Piksi GPS (1 goes w/ the Rover, 1 stays as base)
+	- Futaba RC controller
+
+Step-by-step:
+	- Go the an open field
+	- Turn on the base Piksi GPS and do not move it
+	- Turn the Rover battery on
+	- Turn the Odroid on (no battery yet for it) w/ just the Arduino
+	connected to its USB port (Arduino must not be powered by Vin pin,
+	cause it's already being powered by USB)
+	- Wait for 3 minutes...
+		On Ubuntu Preferences/Startup applications the item 
+		piksi_integration_software must be checked. Its command is:
+		"python /home/odroid/Desktop/GitHub/ODG_Rover/ODG_Rover_Python/startup_code.py"
+		You may have to correct the Path.
+	- Connect the Android Bluetooth Terminal app to the HC-06
+	- Type in "menu"
+		If you get the menu, Arduino bluetooth connection is working properly
+	- Type in "1"
+		If you get "Wrong USB port!" it means the Arduino is communicating
+		properly with the Odroid. You get this message because Piksi GPS
+		is not connected to the USB
+	- Now connect the Piksi to the Odroid USB
+	- Type in "1" again
+	- Wait for the console to be ran
+	- It's recommended to delete all the CSV log and spot files. It can be done
+	by typing in "3" then "6"
+	- Now you have to wait until the Piksi GPS stabilish its connection
+	and provide Fixed RTK solution. According to the Swift Navigation website,
+	it may take up to 15 minutes. Before Fixed RTK solution, there will be
+	2 CSV log files (position and velocity). Whenever it gets Fixed RTK solution,
+	a 3rd file will be created (baseline). It can be checked by typing in "2".
+	When you type in "2", the Arduino will reply with the file names, so you can
+	verify if the 3 of them are there and also choose them to be used afterwards.
+	If you don't want to choose any, type in "0".
+	- Assuming Fixed RTK solution was achieved and the Baseline and Position files
+	where chosen, now you can start the test.
+	- Just to check, type in "4" to stream the log information
+	- Check the value "F". One means Fixed RTK, Zero means Float.
+	- Type in "stop" to stop streamming
+	- Drive to a random position and type in "5" to save its coordinate.
+	- Drive away from this position
+	- Type in "7" to toggle the Robot to autodrive
+		Use right RC joystick to determinine robot velocity
+		Odroid will be calculating a way reach the spot saved
+		The method works by comparing the angle the Robot went to the angle it should have gone. 
+		Then it attempts to	correct this difference by rotating itself. The first angle is calculated 
+		by relating the current position to the previous position and the second by relation 
+		the destination to the previous position as well.
+	- Check if it successfully reaches the previously saved spot
